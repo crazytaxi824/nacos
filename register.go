@@ -19,7 +19,7 @@ type SaasService struct {
 // SaasOption SaasOption
 type SaasOption struct {
 	// 必填项
-	CenterAddr  string // 注册地址,最后不要/
+	CenterURL   string // 注册地址,最后不要/
 	IP          string // 自己的ip地址
 	Port        string // 自己的端口地址
 	ServiceName string // 自己的服务名称
@@ -47,7 +47,7 @@ func (ss *SaasService) ResigterService(option *SaasOption) error {
 
 	// saasOption = *option
 	// 注册事例
-	req := httplib.Put(option.CenterAddr)
+	req := httplib.Put(option.CenterURL)
 	req.Param("ip", option.IP)
 	req.Param("port", option.Port)
 	req.Param("serviceName", option.ServiceName)
@@ -116,7 +116,7 @@ func (ss *SaasService) HeartBeats(ticker *time.Ticker, option *SaasOption) {
 	for {
 		select {
 		case <-ticker.C:
-			beats := httplib.Put(option.CenterAddr + "/beat")
+			beats := httplib.Put(option.CenterURL + "/beat")
 			beats.Param("serviceName", option.ServiceName)
 
 			beatsMap := make(map[string]interface{})
