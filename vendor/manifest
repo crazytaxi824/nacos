@@ -1,0 +1,14 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/dxvgef/go-lib/httplib",
+			"repository": "https://github.com/dxvgef/go-lib",
+			"vcs": "git",
+			"revision": "aa6e5dcbf5d20db15eb0d8f52cfa22d7c59233b1",
+			"branch": "master",
+			"path": "/httplib",
+			"notests": true
+		}
+	]
+}
