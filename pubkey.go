@@ -50,6 +50,10 @@ func (t *SaasPubKey) GetPubKeyFromAuth(reqURL, clientID, secret string) error {
 		return errors.New("pubKey 断言错误")
 	}
 
+	if pubKey == "" {
+		return errors.New("公钥为空")
+	}
+
 	t.PublicKeyStr = pubKey
 
 	return nil
