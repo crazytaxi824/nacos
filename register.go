@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/dxvgef/go-lib/httplib"
@@ -34,8 +33,6 @@ type SaasOption struct {
 	ClusterName string                 // 集群名称
 	Scheduled   bool
 }
-
-var wait sync.WaitGroup
 
 // ResigterService 注册服务
 func (ss *SaasService) ResigterService(option *SaasOption) error {
@@ -92,14 +89,11 @@ func (ss *SaasService) ResigterService(option *SaasOption) error {
 	}
 
 	// 心跳包
-	wait.Add(1)
 	ticker := time.NewTicker(time.Duration(option.HeartBeats) * time.Second)
 	go func(ticker *time.Ticker, option *SaasOption) {
-		defer wait.Done()
 		ss.HeartBeats(ticker, option)
 	}(ticker, option)
 
-	wait.Wait()
 	return ss.err
 }
 
