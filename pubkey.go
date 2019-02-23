@@ -164,7 +164,7 @@ func (t *SaasPubKey) Valid(tokenStr string) error {
 	}
 
 	// 判断是否过期
-	b, err := base64.StdEncoding.DecodeString(tokenSlice[1])
+	b, err := base64.RawStdEncoding.DecodeString(tokenSlice[1])
 	if err != nil {
 		return err
 	}
