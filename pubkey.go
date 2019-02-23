@@ -99,7 +99,7 @@ func GetTokenFromAuth(reqURL, clientID, secret string) (string, error) {
 }
 
 // VerifySignByPublicKey 验证token
-func (t *SaasPubKey) VerifySignByPublicKey(tokenStr string) error {
+func (t *SaasPubKey) VerifySignByPublicKey(tokenStr string) (tokenClaim []byte, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println(r)
@@ -110,39 +110,37 @@ func (t *SaasPubKey) VerifySignByPublicKey(tokenStr string) error {
 
 	// 判断长度
 	if len(tokenSlice) != 3 {
-		return errors.New("token 格式不对")
+		return nil, errors.New("token 格式不对")
 	}
 
 	// 验证签名
 	pubKeyByte, err := base64.StdEncoding.DecodeString(t.PublicKeyStr)
 	if err != nil {
-		log.Println(err.Error())
-		return err
+		return nil, err
 	}
 
 	pubKey, err := x509.ParsePKIXPublicKey(pubKeyByte)
 	if err != nil {
-		log.Println(err.Error())
-		return err
+		return nil, err
 	}
 
 	pubk, ok := pubKey.(*rsa.PublicKey)
 	if !ok {
-		return errors.New("key 断言失败")
+		return nil, errors.New("key 断言失败")
 	}
 
 	signByte, err := base64.RawURLEncoding.DecodeString(tokenSlice[2])
 	if err != nil {
-		log.Println(err.Error())
-		return err
+		return nil, err
 	}
 
 	hash := sha256.New()
 	hash.Write([]byte(tokenSlice[0] + "." + tokenSlice[1]))
 	err = rsa.VerifyPKCS1v15(pubk, crypto.SHA256, hash.Sum(nil), signByte)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	// 解析tokenCliam
+	return base64.RawStdEncoding.DecodeString(tokenSlice[1]), nil
 }
