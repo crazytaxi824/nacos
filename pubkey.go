@@ -10,7 +10,6 @@ import (
 	"errors"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/dxvgef/go-lib/httplib"
 )
@@ -146,74 +145,4 @@ func (t *SaasPubKey) VerifySignByPublicKey(tokenStr string) error {
 	}
 
 	return nil
-}
-
-// Valid 验证签名，验证过期时间
-func (t *SaasPubKey) Valid(tokenStr string) (map[string]interface{}, error) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Println(r)
-		}
-	}()
-
-	tokenSlice := strings.Split(tokenStr, ".")
-
-	// 判断长度
-	if len(tokenSlice) != 3 {
-		return nil, errors.New("token 格式不对")
-	}
-
-	// 判断是否过期
-	b, err := base64.RawStdEncoding.DecodeString(tokenSlice[1])
-	if err != nil {
-		return nil, err
-	}
-
-	r := make(map[string]interface{})
-	err = json.Unmarshal(b, &r)
-	if err != nil {
-		return nil, err
-	}
-
-	exp, ok := r["exp"].(int64)
-	if !ok {
-		return nil, errors.New("exp 断言int64错误")
-	}
-
-	if exp < time.Now().Unix() {
-		return nil, errors.New("token 过期")
-	}
-
-	// 验证签名
-	pubKeyByte, err := base64.StdEncoding.DecodeString(t.PublicKeyStr)
-	if err != nil {
-		log.Println(err.Error())
-		return nil, err
-	}
-
-	pubKey, err := x509.ParsePKIXPublicKey(pubKeyByte)
-	if err != nil {
-		log.Println(err.Error())
-		return nil, err
-	}
-
-	pubk, ok := pubKey.(*rsa.PublicKey)
-	if !ok {
-		return nil, errors.New("key 断言失败")
-	}
-
-	signByte, err := base64.RawURLEncoding.DecodeString(tokenSlice[2])
-	if err != nil {
-		log.Println(err.Error())
-		return nil, err
-	}
-
-	hash := sha256.New()
-	hash.Write([]byte(tokenSlice[0] + "." + tokenSlice[1]))
-	err = rsa.VerifyPKCS1v15(pubk, crypto.SHA256, hash.Sum(nil), signByte)
-	if err != nil {
-		return nil, err
-	}
-
-	return r, nil
 }
