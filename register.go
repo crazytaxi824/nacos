@@ -18,19 +18,18 @@ type SaasService struct {
 // SaasOption SaasOption
 type SaasOption struct {
 	// 必填项
-	CenterURL   string // 注册地址,最后不要/
-	IP          string // 自己的ip地址
-	Port        string // 自己的端口地址
-	ServiceName string // 自己的服务名称
-	HeartBeats  int    // 心跳包间隔时间，单位s
-
+	CenterURL   string                 // 注册地址,最后不要/
+	IP          string                 // 自己的ip地址
+	Port        string                 // 自己的端口地址
+	ServiceName string                 // 自己的服务名称
+	HeartBeats  int                    // 心跳包间隔时间，单位s
+	Metadata    map[string]interface{} //元数据,如果没有数据则需要make一个空map传进来，不能使用nil
 	// 以下为选填,我也不知道干嘛的
 	NamespaceID string
 	Weight      int
 	Enable      bool
 	Healthy     bool
-	Metadata    map[string]interface{} //元数据
-	ClusterName string                 // 集群名称
+	ClusterName string // 集群名称
 	Scheduled   bool
 }
 
