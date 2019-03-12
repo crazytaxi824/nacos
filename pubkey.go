@@ -142,5 +142,5 @@ func (t *SaasPubKey) VerifySignByPublicKey(tokenStr string) (tokenClaim []byte, 
 	}
 
 	// 解析tokenCliam
-	return base64.RawStdEncoding.DecodeString(tokenSlice[1])
+	return base64.RawURLEncoding.DecodeString(tokenSlice[1])
 }
