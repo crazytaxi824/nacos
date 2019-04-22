@@ -78,7 +78,7 @@ func (ss *SaasService) ResigterService(option *SaasOption) error {
 
 	resp, err := req.String()
 	if err != nil {
-		time.Sleep(5 * time.second)
+		time.Sleep(5 * time.Second)
 		go ss.ResigterService(option)
 		return err
 	}
