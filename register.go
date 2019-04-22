@@ -78,6 +78,8 @@ func (ss *SaasService) ResigterService(option *SaasOption) error {
 
 	resp, err := req.String()
 	if err != nil {
+		time.Sleep(5 * time.second)
+		go ss.ResigterService(option)
 		return err
 	}
 
@@ -140,6 +142,7 @@ func (ss *SaasService) HeartBeats(ticker *time.Ticker, option *SaasOption) {
 
 			resp, err := beats.String()
 			if err != nil {
+				go ss.ResigterService(option)
 				ss.err = err
 				return
 			}
